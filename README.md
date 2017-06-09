@@ -9,6 +9,7 @@
 * Resolve as done on reply as yes
 * Ask status only for start date less than or equal to current date
 * Recieve digest at a specified time
+* Reply with `Yes` to resolve on Jira
 
 ## Setup
 
@@ -20,3 +21,9 @@ password=jirapassword
 slackToken=slacktoken
 endpoint=https://jira.corp.domain.com
 ```
+
+## Running
+
+Create the jar using `mvn package`.
+
+Run the `jar` file in `/target/`.
