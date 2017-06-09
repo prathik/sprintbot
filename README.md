@@ -1,5 +1,7 @@
 # Sprint Bot
 
+![Demo Image](demo.png?raw=true "Demo Image")
+
 ## Features
 
 * For all open tasks ask the status
