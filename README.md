@@ -22,6 +22,8 @@ slackToken=slacktoken
 endpoint=https://jira.corp.domain.com
 ```
 
+Add your users in `src/main/resources/users.xml`.
+
 ## Running
 
 Create the jar using `mvn package`.
