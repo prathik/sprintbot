@@ -10,7 +10,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import rocks.thiscoder.dsb.DSBException;
-import rocks.thiscoder.dsb.User;
+import rocks.thiscoder.dsb.model.User;
 
 import java.io.File;
 import java.io.IOException;

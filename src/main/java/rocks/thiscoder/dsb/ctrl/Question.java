@@ -1,13 +1,18 @@
-package rocks.thiscoder.dsb;
+package rocks.thiscoder.dsb.ctrl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraException;
 import org.joda.time.DateTime;
+import rocks.thiscoder.dsb.DSBException;
+import rocks.thiscoder.dsb.actionhandler.AnswerActionHandler;
+import rocks.thiscoder.dsb.jira.Jira;
+import rocks.thiscoder.dsb.model.User;
 import rocks.thiscoder.dsb.slack.Slack;
 import rocks.thiscoder.dsb.slack.SlackMessage;
+
+import java.util.List;
 
 /**
  * @author prathik.raj
@@ -18,17 +23,21 @@ public class Question {
     final User user;
     final DateTime time;
     final Issue issue;
+    final List<AnswerActionHandler> answerActionHandlers;
+
     @Getter
     final Slack slack;
     DateTime askTime;
 
     String answer;
 
-    public Question(Issue issue, User user, DateTime time, Slack slack) {
+    public Question(Issue issue, User user, DateTime time, List<AnswerActionHandler> answerActionHandlers,
+                    Slack slack) {
         this.issue = issue;
         this.question = issue.getSummary() + " done?";
         this.user = user;
         this.time = time;
+        this.answerActionHandlers = answerActionHandlers;
         this.slack = slack;
     }
 
@@ -37,8 +46,7 @@ public class Question {
         getSlack().sendMessageToUser(user, question);
     }
 
-    void poll() throws DSBException  {
-        Jira jira = new Jira();
+    public void poll() throws DSBException  {
         SlackMessage slackMessage = getSlack().getLatestMessageForUser(user);
         while(slackMessage == null || slackMessage.getTime().isBefore(askTime)) {
             System.out.println("Polling");
@@ -52,13 +60,10 @@ public class Question {
 
         setAnswer(slackMessage.getMessage());
 
-        if(this.answer.equals("Yes")) {
-            try {
-                jira.resolveIssue(getIssue());
-            } catch (JiraException e) {
-                throw new DSBException(e);
-            }
+        for(AnswerActionHandler answerActionHandler: answerActionHandlers) {
+            answerActionHandler.takeAction(this.getAnswer(), getIssue());
         }
+
 
     }
 

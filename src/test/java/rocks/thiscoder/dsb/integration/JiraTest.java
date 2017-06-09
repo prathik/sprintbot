@@ -4,7 +4,7 @@ import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.JiraException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import rocks.thiscoder.dsb.Jira;
+import rocks.thiscoder.dsb.jira.Jira;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class JiraTest {
     @Test
     void getJiraIssues() throws JiraException {
-        Jira jira = new Jira();
+        Jira jira = Jira.getInstance();
         List<Issue> issues = jira.getOpenIssuesForUser("prathik.raj");
         System.out.println("issues = " + issues);
         Assert.assertTrue(issues.size() > 0);

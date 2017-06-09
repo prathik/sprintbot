@@ -6,6 +6,12 @@ import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import rocks.thiscoder.dsb.*;
+import rocks.thiscoder.dsb.actionhandler.AnswerActionHandler;
+import rocks.thiscoder.dsb.actionhandler.CommonHandlersFactory;
+import rocks.thiscoder.dsb.ctrl.Question;
+import rocks.thiscoder.dsb.ctrl.UserDSB;
+import rocks.thiscoder.dsb.jira.Jira;
+import rocks.thiscoder.dsb.model.User;
 import rocks.thiscoder.dsb.slack.Slack;
 import rocks.thiscoder.dsb.slack.SlackMessage;
 
@@ -26,7 +32,7 @@ public class UserDSBTest {
         }});
         User u = new User("prathik.raj", "prathik.raj@inmobi.com");
         Slack slack = mock(Slack.class);
-        UserDSB userDSB = new UserDSB(u, jira, slack);
+        UserDSB userDSB = new UserDSB(u, jira, slack, CommonHandlersFactory.getCommonHandlers(jira));
         userDSB.buildQuestions();
         List<Question> questions = userDSB.getQuestions();
         Assert.assertTrue(questions.size() == 0);
@@ -49,12 +55,15 @@ public class UserDSBTest {
         doReturn(new SlackMessage(DateTime.now().plusDays(1), "Yup"))
                 .when(slack).getLatestMessageForUser(u);
 
-        final Question question = new Question(issue, u, DateTime.now().minusDays(1), slack);
+        List<AnswerActionHandler> answerActionHandlers = CommonHandlersFactory.getCommonHandlers(jira);
+
+        final Question question = new Question(issue, u, DateTime.now().minusDays(1),
+                answerActionHandlers, slack);
         final Question spyQuestion = spy(question);
         doNothing().when(spyQuestion).ask();
         doNothing().when(spyQuestion).persist();
 
-        UserDSB userDSB = new UserDSB(u, jira, slack);
+        UserDSB userDSB = new UserDSB(u, jira, slack, answerActionHandlers);
         UserDSB spy = spy(userDSB);
         doNothing().when(spy).buildQuestions();
         spy.setQuestions(new LinkedList<Question>() {{
@@ -67,16 +76,5 @@ public class UserDSBTest {
                 "\n" +
                 "DSB Bot done?\n" +
                 "Yup\n\n");
-    }
-
-    @Test
-    void buildDigest() throws DSBException {
-        Jira jira = new Jira();
-        User u = new User("prathik.raj", "prathik.raj@inmobi.com");
-        UserDSB userDSB = new UserDSB(u, jira, Slack.getInstance());
-        userDSB.buildQuestions();
-        userDSB.askQuestions();
-        User s = new User("avadh.pandey", "avadh.pandey@inmobi.com");
-        Slack.getInstance().sendMessageToUser(s, userDSB.digest());
     }
 }

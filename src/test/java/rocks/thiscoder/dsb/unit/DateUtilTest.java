@@ -3,7 +3,7 @@ package rocks.thiscoder.dsb.unit;
 import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import rocks.thiscoder.dsb.DSBController;
+import rocks.thiscoder.dsb.ctrl.DSBController;
 
 /**
  * @author prathik.raj

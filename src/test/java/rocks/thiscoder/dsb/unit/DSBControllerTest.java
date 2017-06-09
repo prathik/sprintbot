@@ -2,9 +2,9 @@ package rocks.thiscoder.dsb.unit;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
-import rocks.thiscoder.dsb.DSBController;
+import rocks.thiscoder.dsb.ctrl.DSBController;
 import rocks.thiscoder.dsb.DSBException;
-import rocks.thiscoder.dsb.UserDSB;
+import rocks.thiscoder.dsb.ctrl.UserDSB;
 
 import java.util.LinkedList;
 import java.util.List;

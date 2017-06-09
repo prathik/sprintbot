@@ -2,7 +2,7 @@ package rocks.thiscoder.dsb.integration;
 
 import org.testng.annotations.Test;
 import rocks.thiscoder.dsb.DSBException;
-import rocks.thiscoder.dsb.User;
+import rocks.thiscoder.dsb.model.User;
 import rocks.thiscoder.dsb.slack.Slack;
 
 /**

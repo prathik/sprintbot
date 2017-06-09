@@ -1,4 +1,4 @@
-package rocks.thiscoder.dsb;
+package rocks.thiscoder.dsb.jira;
 
 import net.rcarz.jiraclient.*;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -14,8 +14,16 @@ import java.util.List;
 public class Jira {
     final BasicCredentials creds;
     final JiraClient jira;
+    private static Jira jiraObj;
 
-    public Jira() {
+    public static Jira getInstance() {
+        if(jiraObj == null) {
+            jiraObj = new Jira();
+        }
+        return jiraObj;
+    }
+
+    private Jira() {
 
         JiraClient jira1;
         BasicCredentials creds1;

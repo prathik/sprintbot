@@ -1,4 +1,4 @@
-package rocks.thiscoder.dsb;
+package rocks.thiscoder.dsb.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

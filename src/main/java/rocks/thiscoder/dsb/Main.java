@@ -1,11 +1,14 @@
 package rocks.thiscoder.dsb;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import rocks.thiscoder.dsb.actionhandler.CommonHandlersFactory;
+import rocks.thiscoder.dsb.ctrl.DSBController;
+import rocks.thiscoder.dsb.ctrl.UserDSB;
+import rocks.thiscoder.dsb.jira.Jira;
+import rocks.thiscoder.dsb.model.User;
 import rocks.thiscoder.dsb.slack.Slack;
 
 import java.util.LinkedList;
@@ -24,7 +27,7 @@ public class Main {
                                 .setFileName("users.xml"));
 
         try {
-            final Jira jira = new Jira();
+            final Jira jira = Jira.getInstance();
             final Slack slack = Slack.getInstance();
             XMLConfiguration config = builder.getConfiguration();
             List<Object> usernames =  config.getList("user.name");
@@ -35,7 +38,9 @@ public class Main {
                 userDSBList.add(new UserDSB(new User(usernames.get(i).toString(),
                         emails.get(i).toString()),
                         jira,
-                        slack));
+                        slack,
+                        CommonHandlersFactory.getCommonHandlers(jira)
+                        ));
             }
             DSBController dsbController = new DSBController(userDSBList, 11);
             dsbController.run();
