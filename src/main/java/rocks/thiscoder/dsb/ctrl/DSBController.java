@@ -3,6 +3,7 @@ package rocks.thiscoder.dsb.ctrl;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import rocks.thiscoder.dsb.DSBException;
+import rocks.thiscoder.dsb.W8Svc;
 import rocks.thiscoder.dsb.ctrl.UserDSB;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 public class DSBController {
     final List<UserDSB> userDSBs;
     final Integer startHour;
+    final W8Svc w8Svc;
 
     public static long waitTime(DateTime current, int startHour) {
         DateTime nextDay = current.plusDays(1);
@@ -21,26 +23,30 @@ public class DSBController {
         return (nextDay.getMillis() - current.getMillis());
     }
 
+    public void runOnce() throws DSBException {
+        if (DateTime.now().getHourOfDay() == startHour) {
+            StringBuilder report = new StringBuilder();
+            System.out.println("Running");
+            for (UserDSB userDSB : userDSBs) {
+                userDSB.buildQuestions();
+                userDSB.askQuestions();
+                report.append(userDSB.digest());
+                report.append("\n");
+            }
+            System.out.println("report.toString() = " + report.toString());
+        }
+
+        try {
+            System.out.println("Sleeping");
+            w8Svc.sleep(waitTime(DateTime.now(), startHour));
+        } catch (InterruptedException e) {
+            throw new DSBException(e);
+        }
+    }
+
     public void run() throws DSBException {
         while (true) {
-            if (DateTime.now().getHourOfDay() == startHour) {
-                StringBuilder report = new StringBuilder();
-                System.out.println("Running");
-                for (UserDSB userDSB : userDSBs) {
-                    userDSB.buildQuestions();
-                    userDSB.askQuestions();
-                    report.append(userDSB.digest());
-                    report.append("\n");
-                }
-                System.out.println("report.toString() = " + report.toString());
-            }
-
-            try {
-                System.out.println("Sleeping");
-                Thread.sleep(waitTime(DateTime.now(), startHour));
-            } catch (InterruptedException e) {
-                throw new DSBException(e);
-            }
+            runOnce();
         }
     }
 }

@@ -42,7 +42,8 @@ public class Main {
                         CommonHandlersFactory.getCommonHandlers(jira)
                         ));
             }
-            DSBController dsbController = new DSBController(userDSBList, 11);
+            W8Svc w8Svc = new W8Svc();
+            DSBController dsbController = new DSBController(userDSBList, 11, w8Svc);
             dsbController.run();
 
         } catch (ConfigurationException e) {

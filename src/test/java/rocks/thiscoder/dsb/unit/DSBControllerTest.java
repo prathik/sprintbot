@@ -1,7 +1,9 @@
 package rocks.thiscoder.dsb.unit;
 
 import org.joda.time.DateTime;
+import org.mockito.Matchers;
 import org.testng.annotations.Test;
+import rocks.thiscoder.dsb.W8Svc;
 import rocks.thiscoder.dsb.ctrl.DSBController;
 import rocks.thiscoder.dsb.DSBException;
 import rocks.thiscoder.dsb.ctrl.UserDSB;
@@ -19,7 +21,7 @@ import static org.mockito.Mockito.mock;
 @Test
 public class DSBControllerTest {
     @Test
-    void buildDigestNow() throws DSBException {
+    void buildDigestNow() throws DSBException, InterruptedException {
         final UserDSB userDSB = mock(UserDSB.class);
         doNothing().when(userDSB).buildQuestions();
         doNothing().when(userDSB).askQuestions();
@@ -28,7 +30,9 @@ public class DSBControllerTest {
             add(userDSB);
         }};
 
-        DSBController dsbController = new DSBController(userDSBS, DateTime.now().getHourOfDay());
-        dsbController.run();
+        W8Svc w8Svc = mock(W8Svc.class);
+        doNothing().when(w8Svc).sleep(Matchers.anyLong());
+        DSBController dsbController = new DSBController(userDSBS, DateTime.now().getHourOfDay(), w8Svc);
+        dsbController.runOnce();
     }
 }
