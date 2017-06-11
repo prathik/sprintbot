@@ -1,5 +1,5 @@
 # Sprint Bot
-[![Coverage Status](https://coveralls.io/repos/github/prathik/sprintbot/badge.svg?branch=master)](https://coveralls.io/github/prathik/sprintbot?branch=master)
+[![Build Status](https://travis-ci.org/prathik/sprintbot.svg?branch=master)](https://travis-ci.org/prathik/sprintbot) [![Coverage Status](https://coveralls.io/repos/github/prathik/sprintbot/badge.svg?branch=master)](https://coveralls.io/github/prathik/sprintbot?branch=master)
 
 ![Demo Image](demo.png?raw=true "Demo Image")
 
