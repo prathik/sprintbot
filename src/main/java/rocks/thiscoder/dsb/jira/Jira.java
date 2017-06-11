@@ -54,4 +54,8 @@ public class Jira {
     public void resolveIssue(Issue i) throws JiraException {
         i.transition().field(Field.RESOLUTION, "Fixed").execute("Resolve Issue");
     }
+
+    public JiraClient getJira() {
+        return jira;
+    }
 }
