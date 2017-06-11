@@ -15,7 +15,6 @@ import java.util.List;
 public class DSBController {
     final List<UserDSB> userDSBs;
     final Integer startHour;
-    final W8Svc w8Svc;
 
     public static long waitTime(DateTime current, int startHour) {
         DateTime nextDay = current.plusDays(1);
@@ -38,7 +37,7 @@ public class DSBController {
 
         try {
             System.out.println("Sleeping");
-            w8Svc.sleep(waitTime(DateTime.now(), startHour));
+            W8Svc.getInstance().sleep(waitTime(DateTime.now(), startHour));
         } catch (InterruptedException e) {
             throw new DSBException(e);
         }
