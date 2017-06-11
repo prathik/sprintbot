@@ -12,9 +12,7 @@ import rocks.thiscoder.dsb.jira.Jira;
 
 import java.util.List;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author prathik.raj
@@ -27,6 +25,15 @@ public class HandlersTest {
         Issue issue = mock(Issue.class);
         Jira jira = mock(Jira.class);
         doNothing().when(jira).resolveIssue(issue);
+        ResolveOnYes resolveOnYes = new ResolveOnYes(jira);
+        Assert.assertTrue(resolveOnYes.takeAction("Yes", issue));
+    }
+
+    @Test(expectedExceptions = DSBException.class)
+    void resolveOnYesExceptionTest() throws JiraException, DSBException {
+        Issue issue = mock(Issue.class);
+        Jira jira = mock(Jira.class);
+        doThrow(new JiraException("Invalid Jira")).when(jira).resolveIssue(issue);
         ResolveOnYes resolveOnYes = new ResolveOnYes(jira);
         Assert.assertTrue(resolveOnYes.takeAction("Yes", issue));
     }
