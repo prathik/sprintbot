@@ -7,10 +7,10 @@
 
 * For all open tasks ask the status
 * If no task is present as to create one
-* Resolve as done on reply as yes
+* Resolve as done on reply as Yes
+* Start progress when reply is In Progress or In progress
 * Ask status only for start date less than or equal to current date
 * Recieve digest at a specified time
-* Reply with `Yes` to resolve on Jira
 * Very easy to add custom handlers for answers
 
 ## Setup
