@@ -51,7 +51,7 @@ public class Question {
         while(slackMessage == null || slackMessage.getTime().isBefore(askTime)) {
             System.out.println("Polling");
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 throw new DSBException(e);
             }

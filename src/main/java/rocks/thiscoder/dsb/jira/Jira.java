@@ -55,6 +55,10 @@ public class Jira {
         i.transition().field(Field.RESOLUTION, "Fixed").execute("Resolve Issue");
     }
 
+    public void startProgress(Issue i) throws JiraException {
+        i.transition().execute("Start Progress");
+    }
+
     public JiraClient getJira() {
         return jira;
     }
