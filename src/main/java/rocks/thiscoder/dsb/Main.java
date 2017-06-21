@@ -1,54 +1,39 @@
 package rocks.thiscoder.dsb;
 
-import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import rocks.thiscoder.dsb.actionhandler.CommonHandlersFactory;
-import rocks.thiscoder.dsb.ctrl.DSBController;
-import rocks.thiscoder.dsb.ctrl.UserDSB;
-import rocks.thiscoder.dsb.jira.Jira;
-import rocks.thiscoder.dsb.model.User;
-import rocks.thiscoder.dsb.slack.Slack;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+import rocks.thiscoder.dsb.job.SprintBotJob;
 
-import java.util.LinkedList;
-import java.util.List;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * @author prathik.raj
  */
 public class Main {
     public static void main(String[] args) {
-
-        Parameters params = new Parameters();
-        FileBasedConfigurationBuilder<XMLConfiguration> builder =
-                new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
-                        .configure(params.xml()
-                                .setFileName("users.xml"));
-
         try {
-            final Jira jira = Jira.getInstance();
-            final Slack slack = Slack.getInstance();
-            XMLConfiguration config = builder.getConfiguration();
-            List<Object> usernames =  config.getList("user.name");
-            List<Object> emails =  config.getList("user.email");
-            List<UserDSB> userDSBList = new LinkedList<UserDSB>();
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-            for(int i = 0; i<usernames.size(); i++) {
-                userDSBList.add(new UserDSB(new User(usernames.get(i).toString(),
-                        emails.get(i).toString()),
-                        jira,
-                        slack,
-                        CommonHandlersFactory.getCommonHandlers(jira)
-                        ));
-            }
-            DSBController dsbController = new DSBController(userDSBList, 11);
-            dsbController.run();
+            scheduler.start();
+            JobDetail job = newJob(SprintBotJob.class)
+                    .withIdentity("daily", "sprintjob")
+                    .build();
 
-        } catch (ConfigurationException e) {
-            e.printStackTrace();
-        } catch (DSBException e) {
-            e.printStackTrace();
+            Trigger trigger = newTrigger()
+                    .withIdentity("trigger1", "group1")
+                    .startNow()
+                    .withSchedule(cronSchedule("0 30 11 1/1 * ? *"))
+                    .build();
+
+            scheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException se) {
+            se.printStackTrace();
         }
+
     }
 }

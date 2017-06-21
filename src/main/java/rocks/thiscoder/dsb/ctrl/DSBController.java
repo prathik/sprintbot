@@ -1,10 +1,8 @@
 package rocks.thiscoder.dsb.ctrl;
 
 import lombok.RequiredArgsConstructor;
-import org.joda.time.DateTime;
+import lombok.extern.slf4j.Slf4j;
 import rocks.thiscoder.dsb.DSBException;
-import rocks.thiscoder.dsb.W8Svc;
-import rocks.thiscoder.dsb.ctrl.UserDSB;
 
 import java.util.List;
 
@@ -12,40 +10,28 @@ import java.util.List;
  * @author prathik.raj
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DSBController {
     final List<UserDSB> userDSBs;
-    final Integer startHour;
 
-    public static long waitTime(DateTime current, int startHour) {
-        DateTime nextDay = current.plusDays(1);
-        nextDay = nextDay.withTime(startHour,0,0,0);
-        return (nextDay.getMillis() - current.getMillis());
-    }
-
-    public void runOnce() throws DSBException {
-        if (DateTime.now().getHourOfDay() == startHour) {
-            StringBuilder report = new StringBuilder();
-            System.out.println("Running");
-            for (UserDSB userDSB : userDSBs) {
-                userDSB.buildQuestions();
-                userDSB.askQuestions();
-                report.append(userDSB.digest());
+    public String run() throws DSBException {
+        StringBuilder report = new StringBuilder();
+        log.debug("Running");
+        boolean first = true;
+        for (UserDSB userDSB : userDSBs) {
+            userDSB.buildQuestions();
+            userDSB.askQuestions();
+            if(first) {
+                first = false;
+            } else {
                 report.append("\n");
             }
-            System.out.println("report.toString() = " + report.toString());
+            report.append(userDSB.digest());
+
         }
 
-        try {
-            System.out.println("Sleeping");
-            W8Svc.getInstance().sleep(waitTime(DateTime.now(), startHour));
-        } catch (InterruptedException e) {
-            throw new DSBException(e);
-        }
+        log.debug(report.toString());
+        return report.toString();
     }
 
-    public void run() throws DSBException {
-        while (true) {
-            runOnce();
-        }
-    }
 }
